@@ -3,12 +3,11 @@ import './GameBoard.css';
 import Box from "./Box";
 
 function GameBoard(props){
-    const {colors} = props;
-    console.log(colors);
     
+    const boxArr = props.boxes;
     
-    const boxes = colors.map((color, i) =>(
-        <Box color={color} key={i}/>
+    const boxes = boxArr.map((box, i) =>(
+        <Box color={box.backgroundColor} key={box.id} id={box.id} status={box.status} onReveal={props.onReveal}/>
     ))
     return ([
         <div className="game-board">

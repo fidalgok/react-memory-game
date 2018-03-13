@@ -4,25 +4,31 @@ import NavBar from "./NavBar";
 import "./index.css";
 import GameBoard from "./GameBoard";
 
+const boxStatus = {
+  HIDING: 0,
+  SHOWING: 1,
+  MATCHED: 3
+};
+
 class App extends Component {
   static defaultProps = {
-    colors: [
-      "#FF4081",
-      "#FF4081",
-      "#03A9F4",
-      "#03A9F4",
-      "#3ae374",
-      "#3ae374",
-      "#fffa65",
-      "#fffa65",
-      "#ff3838",
-      "#ff3838",
-      "#ffaf40",
-      "#ffaf40",
-      "#3c40c6",
-      "#3c40c6",
-      "#4bcffa",
-      "#4bcffa"
+    boxes: [
+      { id: 0, backgroundColor: "#FF4081", status: boxStatus.HIDING },
+      { id: 1, backgroundColor: "#FF4081", status: boxStatus.HIDING },
+      { id: 2, backgroundColor: "#03A9F4", status: boxStatus.HIDING },
+      { id: 3, backgroundColor: "#03A9F4", status: boxStatus.HIDING },
+      { id: 4, backgroundColor: "#3ae374", status: boxStatus.HIDING },
+      { id: 5, backgroundColor: "#3ae374", status: boxStatus.HIDING },
+      { id: 6, backgroundColor: "#fffa65", status: boxStatus.HIDING },
+      { id: 7, backgroundColor: "#fffa65", status: boxStatus.HIDING },
+      { id: 8, backgroundColor: "#ff3838", status: boxStatus.HIDING },
+      { id: 9, backgroundColor: "#ff3838", status: boxStatus.HIDING },
+      { id: 10, backgroundColor: "#ffaf40", status: boxStatus.HIDING },
+      { id: 11, backgroundColor: "#ffaf40", status: boxStatus.HIDING },
+      { id: 12, backgroundColor: "#3c40c6", status: boxStatus.HIDING },
+      { id: 13, backgroundColor: "#3c40c6", status: boxStatus.HIDING },
+      { id: 14, backgroundColor: "#4bcffa", status: boxStatus.HIDING },
+      { id: 15, backgroundColor: "#4bcffa", status: boxStatus.HIDING }
     ]
   };
 
@@ -30,49 +36,99 @@ class App extends Component {
     super(props);
 
     this.state = {
-      colors: colors,
       gameStarted: false,
-      isWinner: false
+      isWinner: false,
+      revealed: []
     };
     this.handleReset = this.handleReset.bind(this);
     this.handleStart = this.handleStart.bind(this);
     this.handleShuffle = this.handleShuffle.bind(this);
+    this.handleReveal = this.handleReveal.bind(this);
   }
 
   handleShuffle(array) {
     shuffle(array);
-    return array.map(color => ({ color, isSelected: false }));
   }
 
   handleStart(array) {
-    
+    this.handleShuffle(this.props.boxes);
     this.setState({
       gameStarted: true,
-      colors: this.handleShuffle(this.props.colors)
+      boxes: this.props.boxes
     });
-    
   }
 
   handleReset() {
-    const newColors = this.handleShuffle(this.props.colors);
+    this.handleShuffle(this.props.boxes);
     this.setState({
-      colors: newColors,
+      boxes: this.props.boxes,
+      revealed: [],
       gameStarted: false,
       isWinner: false
     });
   }
 
-  handleReveal(){
-      return
+  handleReveal(id) {
+    let isWinner = false;
+    const revealed = this.state.boxes.filter(box => {
+      return box.status === boxStatus.SHOWING || box.status === boxStatus.MATCHED;
+    });
+    if(revealed.length == 15){
+        isWinner = true;
+        
+    }
+    let revealedBoxes = this.state.revealed.slice();
+    const boxes = this.state.boxes.map((box, i, arr) => {
+        
+      if (box.id === id) {
+        if (revealedBoxes.length <= 2) {
+          box.status = boxStatus.SHOWING;
+          revealedBoxes.push(i);
+          if (revealedBoxes.length > 1) {
+              
+              if(arr[revealedBoxes[0]].backgroundColor === box.backgroundColor &&
+                arr[revealedBoxes[0]].id !== box.id
+                ){
+                box.status = boxStatus.MATCHED;
+                arr[revealedBoxes[0]].status = boxStatus.MATCHED;
+              
+              }
+            
+              
+          }
+          
+        }
+      }
+      //if not matched we need to reset the boxes
+
+      return box;
+    });
+    
+      //
+      this.setState({ boxes, revealed: revealedBoxes, isWinner});
+    if (revealedBoxes.length === 2) {
+      if (boxes[revealedBoxes[0]].status !== boxStatus.MATCHED) {
+          
+        boxes[revealedBoxes[0]].status = boxStatus.HIDING;
+        boxes[revealedBoxes[1]].status = boxStatus.HIDING;
+      }
+      this.setState({ boxes, revealed: [] });
+    }
   }
 
   render() {
-    const { colors } = this.props;
-    
-    this.state.gameStarted ? null : this.handleStart(colors);
+    let { boxes } = this.props;
+
+    this.state.gameStarted ? null : this.handleStart(this.props.boxes);
+    boxes = this.state.boxes || boxes;
     return [
-      <NavBar />,
-      <GameBoard colors={this.state.colors} onReset={() => this.handleReset} />
+      <NavBar isWinner={this.state.isWinner}/>,
+      <GameBoard
+        boxes={boxes}
+        onReset={this.handleReset}
+        onReveal={this.handleReveal}
+        
+      />
     ];
   }
 }
@@ -85,9 +141,5 @@ function shuffle(array) {
     [array[index], array[i]] = [array[i], array[index]];
   }
 }
-
-const colors = [
- 
-];
 
 ReactDOM.render(<App />, document.getElementById("root"));

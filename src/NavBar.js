@@ -6,7 +6,10 @@ function NavBar(props) {
     <div className="navBar">
       <h1><a>Memory Game</a></h1>
       <nav>
-          <a>Play Again</a>
+          {props.isWinner && 
+            <h2>You've Won!</h2>
+          }
+          <a>Play Again?</a>
       </nav>
     </div>
   ];
