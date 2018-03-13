@@ -36,6 +36,7 @@ class App extends Component {
     super(props);
 
     this.state = {
+      boxes: [...this.props.boxes],
       gameStarted: false,
       isWinner: false,
       revealed: []
@@ -51,17 +52,25 @@ class App extends Component {
   }
 
   handleStart(array) {
-    this.handleShuffle(this.props.boxes);
+    
     this.setState({
       gameStarted: true,
-      boxes: this.props.boxes
+      
     });
   }
 
   handleReset() {
-    this.handleShuffle(this.props.boxes);
+    const boxes = this.state.boxes.map((box)=>{
+        return {
+            id: box.id,
+            backgroundColor:box.backgroundColor,
+            status: boxStatus.HIDING,
+        }
+    })
+    this.handleShuffle(boxes);
+    
     this.setState({
-      boxes: this.props.boxes,
+      boxes: boxes,
       revealed: [],
       gameStarted: false,
       isWinner: false
@@ -117,15 +126,15 @@ class App extends Component {
   }
 
   render() {
-    let { boxes } = this.props;
-
+    let { boxes } = this.state;
+    
     this.state.gameStarted ? null : this.handleStart(this.props.boxes);
     boxes = this.state.boxes || boxes;
+    
     return [
-      <NavBar isWinner={this.state.isWinner}/>,
+      <NavBar isWinner={this.state.isWinner} onReset={this.handleReset}/>,
       <GameBoard
         boxes={boxes}
-        onReset={this.handleReset}
         onReveal={this.handleReveal}
         
       />

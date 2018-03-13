@@ -9,7 +9,7 @@ function NavBar(props) {
           {props.isWinner && 
             <h2>You've Won!</h2>
           }
-          <a>Play Again?</a>
+          <a onClick={()=>props.onReset()}>Play Again?</a>
       </nav>
     </div>
   ];
