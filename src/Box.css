@@ -1,0 +1,9 @@
+.box {
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    margin: 0 10px 10px 10px;
+    background-color:#4b4b4b;
+    transition: background-color .12s linear;
+}
+

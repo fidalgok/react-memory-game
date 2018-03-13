@@ -1,0 +1,26 @@
+.navBar{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color:#512DA8;
+    margin-bottom:40px;
+}
+
+.navBar a{
+    text-decoration: none;
+    color: rgba(255,255,255, .85);
+    transition: all .10s linear;
+}
+
+h1 a{
+    font-family: 'Lilita One', cursive;
+    color: rgba(255,255,255,1);
+    text-transform: capitalize;
+    letter-spacing: .15em;
+}
+
+.navBar a:hover {
+    color: rgba(255,255,255,1);
+    cursor: pointer;
+}
